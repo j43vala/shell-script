@@ -18,6 +18,9 @@ git clone https://github.com/j43vala/Data_read_register_sqlite_pg_frontend.git
 # Navigate to the cloned repository
 cd "$SCRIPT_DIR/Data_read_register_sqlite_pg_frontend"
 
+# Pull the latest changes from the repository
+git pull
+
 # Set up Python venv
 if [ ! -d "ENV" ]; then
     python -m venv ENV
