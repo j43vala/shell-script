@@ -46,7 +46,7 @@ sudo systemctl start app_be.service
 LOGROTATE_CONF="/etc/logrotate.d/custom_logs"
 
 # Create logrotate configuration file
-echo "$SCRIPT_DIR/path/to/your/logfile {" | sudo tee "$LOGROTATE_CONF"
+echo "/var/log/journal/*/*.journal /var/log/*.log {" | sudo tee "$LOGROTATE_CONF"
 echo "    size 30M" | sudo tee -a "$LOGROTATE_CONF"
 echo "    rotate 5" | sudo tee -a "$LOGROTATE_CONF"
 echo "    compress" | sudo tee -a "$LOGROTATE_CONF"
@@ -56,7 +56,7 @@ echo "    copytruncate" | sudo tee -a "$LOGROTATE_CONF"
 echo "}" | sudo tee -a "$LOGROTATE_CONF"
 
 # Force log rotation to test the configuration
-sudo logrotate -vf /etc/logrotate.conf
+sudo logrotate -vf "$LOGROTATE_CONF"
 
 # Update system packages
 sudo apt-get update
