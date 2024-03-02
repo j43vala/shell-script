@@ -39,8 +39,8 @@ sudo systemctl enable "$SCRIPT_DIR/Data_read_register_sqlite_pg_frontend/service
 sudo systemctl enable "$SCRIPT_DIR/Data_read_register_sqlite_pg_frontend/service_files/app_be.service"
 
 # Start systemd services
-# sudo systemctl start app_mb_hybrid.service
 sudo systemctl start app_be.service
+
 
 # Add logrotate configuration for your logs
 LOGROTATE_CONF="/etc/logrotate.d/custom_logs"
@@ -57,7 +57,34 @@ echo "}" | sudo tee -a "$LOGROTATE_CONF" > /dev/null
 
 # Force log rotation to test the configuration
 sudo logrotate -vf "$LOGROTATE_CONF"
+#---------------------------------------------------------------------------------------
+# Install wireguard and configure
+sudo apt install wireguard
 
+# Generate a private key and public key for the WireGuard interface
+sudo wg genkey | sudo tee /etc/wireguard/privatekey | wg pubkey | sudo tee /etc/wireguard/publickey
+
+# Create the WireGuard configuration file
+sudo tee /etc/wireguard/wg0.conf > /dev/null <<EOF
+[Interface]
+Address = 10.13.13.5
+PrivateKey = OGw3HGwoDhNxpiTkACLTFODZXe9vKcF0E6MLie0F8Fs=
+ListenPort = 51820
+DNS = 10.13.13.1
+
+[Peer]
+PublicKey = NpkaCNA43u+fgz2HfI8F9gRVv9XHaCnXLZ2EnEEBPhU=
+PresharedKey = QqldaFo8lpJlCAocSpL0YXmx8EVIv8Lg93ScWDVlk5c=
+Endpoint = 172.105.49.231:51820
+AllowedIPs = 0.0.0.0/0
+EOF
+
+# Install openresolv
+sudo apt install openresolv
+
+# Start the WireGuard interface
+sudo wg-quick up wg0
+#---------------------------------------------------------------------------------------
 # Update system packages
 sudo apt-get update
 sudo apt-get upgrade
