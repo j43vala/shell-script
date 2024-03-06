@@ -13,10 +13,9 @@ sudo ufw allow 5000
 sudo apt install git
 
 # Clone the repository
-git clone https://github.com/j43vala/Data_read_register_sqlite_pg_frontend.git
-
+git clone https://github.com/j43vala/wzero-edge-app.git
 # Navigate to the cloned repository
-cd "$SCRIPT_DIR/Data_read_register_sqlite_pg_frontend"
+cd "$SCRIPT_DIR/wzero-edge-app"
 
 # Pull the latest changes from the repository
 git pull
@@ -35,8 +34,8 @@ pip install -r requirements.txt
 cd service_files
 
 # Enable system services
-sudo systemctl enable "$SCRIPT_DIR/Data_read_register_sqlite_pg_frontend/service_files/app_mb_hybrid.service"
-sudo systemctl enable "$SCRIPT_DIR/Data_read_register_sqlite_pg_frontend/service_files/app_be.service"
+sudo systemctl enable "$SCRIPT_DIR/wzero-edge-app/service_files/app_mb_hybrid.service"
+sudo systemctl enable "$SCRIPT_DIR/wzero-edge-app/service_files/app_be.service"
 
 # Start systemd services
 sudo systemctl start app_be.service
