@@ -1,5 +1,7 @@
-#!/bin/bash
+# !/bin/bash
 # Install UFW and enable firewall rules
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+
 sudo apt install ufw
 sudo ufw enable
 sudo ufw status
@@ -13,6 +15,7 @@ git clone https://github.com/j43vala/wzero-edge-app.git
 cd "$SCRIPT_DIR/wzero-edge-app"
 # Pull the latest changes from the repository
 git pull
+
 # Set up Python venv
 if [ ! -d "ENV" ]; then
     python -m venv ENV
@@ -21,15 +24,20 @@ fi
 # Install Python dependencies including necessary dependencies for psutil
 sudo apt-get install gcc python3-dev
 pip install -r requirements.txt
+
 # Navigate to the service file directory
 cd service_files
+
 # Enable system services
 sudo systemctl enable "$SCRIPT_DIR/wzero-edge-app/service_files/app_mb_hybrid.service"
 sudo systemctl enable "$SCRIPT_DIR/wzero-edge-app/service_files/app_be.service"
+
 # Start systemd services
 sudo systemctl start app_be.service
+
 # Add logrotate configuration for your logs
 LOGROTATE_CONF="/etc/logrotate.d/custom_logs"
+
 # Create logrotate configuration file or overwrite if exists
 echo "/var/log/journal/*/*.journal /var/log/*.log {" | sudo tee "$LOGROTATE_CONF" > /dev/null
 echo "    size 30M" | sudo tee -a "$LOGROTATE_CONF" > /dev/null
@@ -39,6 +47,7 @@ echo "    missingok" | sudo tee -a "$LOGROTATE_CONF" > /dev/null
 echo "    notifempty" | sudo tee -a "$LOGROTATE_CONF" > /dev/null
 echo "    copytruncate" | sudo tee -a "$LOGROTATE_CONF" > /dev/null
 echo "}" | sudo tee -a "$LOGROTATE_CONF" > /dev/null
+
 # Force log rotation to test the configuration
 sudo logrotate -vf "$LOGROTATE_CONF"
 # Install wireguard and configure
