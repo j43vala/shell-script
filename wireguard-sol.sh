@@ -63,10 +63,11 @@ else
 fi
 # Check if WireGuard configuration files exist in /etc/wireguard
 if ls /etc/wireguard/*.conf 1> /dev/null 2>&1; then
+    sudo systemctl enable wg-quick@wg0
+    sudo systemctl start wg-quick@wg0
     # Start the WireGuard interface
     sudo wg-quick up wg0
     # Start the WireGuard service
-    sudo systemctl start wg-quick@wg0
 
 else
     echo "No WireGuard configuration files found in /etc/wireguard. Skipping WireGuard setup."
