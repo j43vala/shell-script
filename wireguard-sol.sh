@@ -111,8 +111,17 @@ sudo apt install wireguard
 sudo apt install openresolv
 # Check if WireGuard configuration files exist in /home/wzero
 if ls /home/wzero/*.conf 1> /dev/null 2>&1; then
-    # Copy and overwrite the .conf files to the WireGuard folder
-    sudo cp -f /home/wzero/*.conf /etc/wireguard/
+    # Loop through each .conf file in /home/wzero
+    for conf_file in /home/wzero/*.conf; do
+        filename=$(basename "$conf_file")
+        if [ -f "/etc/wireguard/$filename" ]; then
+            # If the file already exists in /etc/wireguard, overwrite it
+            sudo cp -f "$conf_file" "/etc/wireguard/$filename"
+        else
+            # If the file doesn't exist, copy it to /etc/wireguard
+            sudo cp "$conf_file" /etc/wireguard/
+        fi
+    done
     # Remove older peer files, keeping only the latest one
     sudo ls -t /etc/wireguard/*.conf | tail -n +2 | sudo xargs rm --
 else
