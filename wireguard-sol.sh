@@ -1,18 +1,23 @@
-# !/bin/bash
-# Install UFW and enable firewall rules
+
+#!/bin/bash
+# Detect the current directory of the script
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 
+# Install and configure UFW
 sudo apt install ufw
 sudo ufw enable
 sudo ufw status
 sudo ufw allow 22
 sudo ufw allow 5000
+
 # Install Git
 sudo apt install git
+
 # Clone the repository
 git clone https://github.com/j43vala/wzero-edge-app.git
 # Navigate to the cloned repository
 cd "$SCRIPT_DIR/wzero-edge-app"
+
 # Pull the latest changes from the repository
 git pull
 
@@ -21,6 +26,7 @@ if [ ! -d "ENV" ]; then
     python -m venv ENV
 fi
 . ENV/bin/activate
+
 # Install Python dependencies including necessary dependencies for psutil
 sudo apt-get install gcc python3-dev
 pip install -r requirements.txt
@@ -50,28 +56,40 @@ echo "}" | sudo tee -a "$LOGROTATE_CONF" > /dev/null
 
 # Force log rotation to test the configuration
 sudo logrotate -vf "$LOGROTATE_CONF"
-# Install wireguard and configure
-sudo apt install wireguard
-# Install openresolv
-sudo apt install openresolv
-# Check if WireGuard configuration files exist in /home/wzero
-if ls /home/wzero/*.conf 1> /dev/null 2>&1; then
-    # Copy and overwrite the .conf files to the WireGuard folder
-    sudo cp -f /home/wzero/*.conf /etc/wireguard/
-else
-    echo "No WireGuard configuration files found in /home/wzero. Skipping copy."
-fi
-# Check if WireGuard configuration files exist in /etc/wireguard
-if ls /etc/wireguard/*.conf 1> /dev/null 2>&1; then
-    sudo systemctl enable wg-quick@wg0
-    sudo systemctl start wg-quick@wg0
-    # Start the WireGuard interface
-    sudo wg-quick up wg0
-    # Start the WireGuard service
 
+#-------------------------------------------------------------------------------
+# Find and replace the WireGuard configuration file dynamically
+WG_CONF=$(find "$SCRIPT_DIR" -name '*.conf' -type f | head -n 1)
+
+if [ -n "$WG_CONF" ]; then
+    # Check if the existing configuration is different
+    if ! cmp -s "$WG_CONF" /etc/wireguard/wg0.conf; then
+        # Install wireguard and configure
+        sudo apt install wireguard
+
+        # Copy the WireGuard configuration file to /etc/wireguard/
+        sudo cp "$WG_CONF" /etc/wireguard/wg0.conf
+
+        # Install openresolv
+        sudo apt install openresolv
+
+        # Start the WireGuard interface
+        sudo wg-quick up wg0
+
+        echo "WireGuard configuration updated."
+    else
+        echo "WireGuard configuration is already up to date."
+    fi
 else
-    echo "No WireGuard configuration files found in /etc/wireguard. Skipping WireGuard setup."
+    echo "WireGuard configuration file not found!"
 fi
+
+#---------------------------------------------------------------------------------------
+
 # Update system packages
 sudo apt-get update
 sudo apt-get upgrade
+!/bin/bash
+Detect the current directory of the script
+
+
