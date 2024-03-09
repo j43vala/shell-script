@@ -56,34 +56,9 @@ echo "}" | sudo tee -a "$LOGROTATE_CONF" > /dev/null
 
 # Force log rotation to test the configuration
 sudo logrotate -vf "$LOGROTATE_CONF"
-
 #-------------------------------------------------------------------------------
-# Find and replace the WireGuard configuration file dynamically
-# WG_CONF=$(find "$SCRIPT_DIR" -name '*.conf' -type f | head -n 1)
+# wireguard solution - 
 
-# if [ -n "$WG_CONF" ]; then
-#     # Check if the existing configuration is different
-#     if ! cmp -s "$WG_CONF" /etc/wireguard/wg0.conf; then
-#         # Install wireguard and configure
-#         sudo apt install wireguard
-
-#         # Copy the WireGuard configuration file to /etc/wireguard/
-#         sudo cp "$WG_CONF" /etc/wireguard/wg0.conf
-
-#         # Install openresolv
-#         sudo apt install openresolv
-
-#         # Start the WireGuard interface
-#         sudo wg-quick up wg0
-
-#         echo "WireGuard configuration updated."
-#     else
-#         echo "WireGuard configuration is already up to date."
-#     fi
-# else
-#     echo "WireGuard configuration file not found!"
-# fi
-#-------------------------------------------------------------------------------
 # Find and replace the WireGuard configuration file dynamically
 WG_CONF=$(find "$SCRIPT_DIR" -name '*.conf' -type f | head -n 1)
 
