@@ -35,7 +35,7 @@ pip install -r requirements.txt
 cd service_files
 
 # Enable system services
-sudo systemctl enable "$SCRIPT_DIR/wzero-edge-app/service_files/app_mb_hybrid.service"
+# sudo systemctl enable "$SCRIPT_DIR/wzero-edge-app/service_files/app_mb_hybrid.service"
 sudo systemctl enable "$SCRIPT_DIR/wzero-edge-app/service_files/app_be.service"
 
 # Start systemd services
