@@ -1,0 +1,33 @@
+---
+- name: Configure UFW
+  hosts: all
+  become: true
+  tasks:
+    - name: Install UFW
+      apt:
+        name: ufw
+        state: present
+
+    - name: Enable UFW
+      command: ufw enable
+      args:
+        creates: /etc/ufw/ufw.conf
+
+    - name: Check UFW Status
+      command: ufw status
+      register: ufw_status
+
+    - debug:
+        var: ufw_status.stdout
+
+    - name: Allow SSH (port 22)
+      command: ufw allow 22
+      args:
+        warn: false
+      when: "'22' not in ufw_status.stdout"
+
+    - name: Allow custom port (e.g., 5000)
+      command: ufw allow 5000
+      args:
+        warn: false
+      when: "'5000' not in ufw_status.stdout"
